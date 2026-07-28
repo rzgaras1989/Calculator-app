@@ -1,0 +1,17 @@
+{
+  "name": "Physical",
+  "short_name": "Physical",
+  "description": "Scientific Calculator with Physical Constants and Converters built by Rzgar Saeed",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "background_color": "#12121a",
+  "theme_color": "#12121a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

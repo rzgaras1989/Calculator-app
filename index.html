@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Physical">
+    <meta name="theme-color" content="#12121a">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="1.png">
+    <title>Physical</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        html, body {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #12121a;
+            overflow: hidden;
+            touch-action: none;
+            transform: translateZ(0); 
+        }
+
+        .calculator {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background-color: #222230;
+            display: flex;
+            flex-direction: column;
+            padding: 3vmin;
+        }
+
+        .screen-wrapper {
+            flex: 0 0 15vh;
+            background-color: #86b5b1;
+            border-radius: 12px;
+            margin-bottom: 2vmin;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            overflow: hidden;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #display {
+            width: 100%;
+            font-size: clamp(30px, 7vmin, 50px);
+            font-weight: 900;
+            color: #000000;
+            text-align: right;
+            direction: ltr;
+            white-space: nowrap;
+            overflow-x: auto;
+            touch-action: pan-x;
+            outline: none;
+            letter-spacing: 2px;
+            line-height: 90px;
+            font-style: normal !important;
+        }
+
+        #display::-webkit-scrollbar { display: none; }
+
+        #display:empty::before {
+            content: 'Rzgar Saeed';
+            color: #556B2F;
+            font-size: clamp(28px, 6vmin, 45px);
+            font-weight: 900;
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-style: normal;
+        }
+
+        .buttons {
+            flex: 1; 
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 1.5vmin;
+        }
+
+        @media (orientation: landscape) {
+            .screen-wrapper { flex: 0 0 20vh; }
+            .buttons {
+                grid-template-columns: repeat(8, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+            }
+            .buttons button:nth-child(1) { order: 1; }
+            .buttons button:nth-child(2) { order: 2; }
+            .buttons button:nth-child(3) { order: 3; }
+            .buttons button:nth-child(4) { order: 4; }
+            .buttons button:nth-child(13) { order: 5; } 
+            .buttons button:nth-child(14) { order: 6; } 
+            .buttons button:nth-child(15) { order: 7; } 
+            .buttons button:nth-child(16) { order: 8; } 
+
+            .buttons button:nth-child(5) { order: 9; }
+            .buttons button:nth-child(6) { order: 10; }
+            .buttons button:nth-child(7) { order: 11; }
+            .buttons button:nth-child(8) { order: 12; }
+            .buttons button:nth-child(17) { order: 13; } 
+            .buttons button:nth-child(18) { order: 14; } 
+            .buttons button:nth-child(19) { order: 15; } 
+            .buttons button:nth-child(20) { order: 16; } 
+
+            .buttons button:nth-child(9) { order: 17; }
+            .buttons button:nth-child(10) { order: 18; }
+            .buttons button:nth-child(11) { order: 19; }
+            .buttons button:nth-child(12) { order: 20; }
+            .buttons button:nth-child(21) { order: 21; } 
+            .buttons button:nth-child(22) { order: 22; } 
+            .buttons button:nth-child(23) { order: 23; } 
+            .buttons button:nth-child(24) { order: 24; } 
+
+            .buttons button:nth-child(25) { order: 25; } 
+            .buttons button:nth-child(29) { order: 26; } 
+            .buttons button:nth-child(30) { order: 27; } 
+            .buttons button:nth-child(31) { order: 28; } 
+            .buttons button:nth-child(26) { order: 29; } 
+            .buttons button:nth-child(27) { order: 30; } 
+            .buttons button:nth-child(28) { order: 31; } 
+            .buttons button:nth-child(32) { order: 32; } 
+        }
+
+        button {
+            border: none;
+            background-color: #262633; 
+            color: white;
+            font-size: clamp(20px, 5.5vmin, 30px);
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0; 
+        }
+
+        button:active {
+            transform: scale(0.92);
+            background-color: #353545;
+        }
+
+        .btn-num {
+            font-size: clamp(30px, 8vmin, 45px) !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+            background-color: #38384b !important;
+        }
+        .btn-num:active { background-color: #4b4b5f !important; }
+
+        .btn-operator { 
+            background-color: #ff9f0a; 
+            font-size: clamp(30px, 7.5vmin, 45px); 
+            font-style: normal !important;
+        }
+        .btn-operator:active { background-color: #cc7a00; }
+
+        .btn-action { background-color: #ff3b30; font-style: normal !important; }
+        .btn-action:active { background-color: #c22720; }
+
+        .btn-inv { background-color: #34c759; }
+        .btn-inv.active { background-color: #ffffff; color: #34c759; }
+
+        .btn-cons { background-color: #8e44ad; }
+
+        .btn-equal { 
+            background-color: #0a84ff; 
+            font-size: clamp(30px, 7.5vmin, 45px); 
+            font-style: normal !important;
+        }
+        .btn-equal:active { background-color: #005bb5; }
+
+        .modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            border-radius: 0;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-content {
+            background: #222230;
+            width: 95%;
+            height: 95%; 
+            padding: 15px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .const-item {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 8px;
+            direction: ltr;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        .const-item::-webkit-scrollbar { display: none; }
+        .const-item:hover { background-color: #353545; }
+
+        .const-sym {
+            font-family: 'Cambria Math', serif;
+            font-style: italic;
+            font-size: clamp(18px, 4vmin, 26px);
+            color: #ff9f0a;
+        }
+
+        .btn-close-modal {
+            width: 100%;
+            height: 50px;
+            margin-top: 15px;
+            background: #ff3b30;
+            font-style: normal;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .conv-input {
+            width: 100%;
+            padding: 12px;
+            background: #353545;
+            color: white;
+            border: 2px solid #444;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            outline: none;
+            text-align: center;
+            text-align-last: center;
+        }
+        .conv-input:focus { border-color: #86b5b1; }
+        .conv-row { display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0; }
+        
+        #convSteps {
+            flex: 1; 
+            margin: 10px 0;
+            background: #1c1c25;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(20px, 5.5vmin, 32px); 
+            direction: ltr;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="screen-wrapper">
+            <div id="display"></div>
+        </div>
+
+        <div class="buttons">
+            <!-- ڕیزی یەکەم -->
+            <button class="btn-inv" id="btn-inv" onclick="toggleInv()">inv</button>
+            <button id="btn-sin" onclick="handleTrig('sin')">sin</button>
+            <button id="btn-cos" onclick="handleTrig('cos')">cos</button>
+            <button id="btn-tan" onclick="handleTrig('tan')">tan</button>
+
+            <!-- ڕیزی دووەم -->
+            <button id="btn-log" onclick="handleLog()">log</button>
+            <button id="btn-sq" onclick="handlePowerRoot('sq')">x²</button>
+            <button id="btn-cb" onclick="handlePowerRoot('cb')">x³</button>
+            <button class="btn-operator" onclick="insert('^')">^</button>
+
+            <!-- ڕیزی سێیەم -->
+            <button onclick="insert('(')">(</button>
+            <button onclick="insert(')')">)</button>
+            <button class="btn-action" onclick="del()">DEL</button>
+            <button id="btn-ac" class="btn-action" onclick="ac()">AC</button>
+
+            <!-- ڕیزی چوارەم -->
+            <button class="btn-num" onclick="insert('7')">7</button>
+            <button class="btn-num" onclick="insert('8')">8</button>
+            <button class="btn-num" onclick="insert('9')">9</button>
+            <button class="btn-operator" onclick="insert('÷')">÷</button>
+
+            <!-- ڕیزی پێنجەم -->
+            <button class="btn-num" onclick="insert('4')">4</button>
+            <button class="btn-num" onclick="insert('5')">5</button>
+            <button class="btn-num" onclick="insert('6')">6</button>
+            <button class="btn-operator" onclick="insert('x')">x</button>
+
+            <!-- ڕیزی شەشەم -->
+            <button class="btn-num" onclick="insert('1')">1</button>
+            <button class="btn-num" onclick="insert('2')">2</button>
+            <button class="btn-num" onclick="insert('3')">3</button>
+            <button class="btn-operator" onclick="insert('-')">-</button>
+
+            <!-- ڕیزی حەوتەم -->
+            <button class="btn-cons" onclick="openCons()">cons</button>
+            <button class="btn-num" onclick="insert('0')">0</button>
+            <button class="btn-num" onclick="insert('.')">.</button>
+            <button class="btn-operator" onclick="insert('+')">+</button>
+
+            <!-- ڕیزی هەشتەم -->
+            <button id="btn-eng" onclick="handleEng()">ENG</button>
+            <button onclick="openConv()">conv</button>
+            <button onclick="insert('ANS')">ANS</button>
+            <button class="btn-equal" onclick="calc()">=</button>
+        </div>
+
+        <!-- شاشەی نەگۆڕەکان -->
+        <div id="consModal" class="modal">
+            <div class="modal-content" style="overflow-y: auto;">
+                <div class="const-item" onclick="insertCons('1.6x10^-19')">
+                    <span class="const-sym">e = 1.6 x 10<sup>-19</sup> C</span>
+                </div>
+                <div class="const-item" onclick="insertCons('1.67x10^-27')">
+                    <span class="const-sym">m<sub>p</sub> = 1.67 x 10<sup>-27</sup> kg</span>
+                </div>
+                <div class="const-item" onclick="insertCons('9.11x10^-31')">
+                    <span class="const-sym">m<sub>e</sub> = 9.11 x 10<sup>-31</sup> kg</span>
+                </div>
+                <div class="const-item" onclick="insertCons('(4x3.14159x10^-7)')">
+                    <span class="const-sym">μ<sub>0</sub> = 4π x 10<sup>-7</sup> T.m/A</span>
+                </div>
+                <div class="const-item" onclick="insertCons('6.67x10^-11')">
+                    <span class="const-sym">G = 6.67 x 10<sup>-11</sup> N.m²/kg²</span>
+                </div>
+                <div class="const-item" onclick="insertCons('9x10^9')">
+                    <span class="const-sym">k = 9 x 10<sup>9</sup> N.m²/C²</span>
+                </div>
+                <button class="btn-close-modal" onclick="closeCons()">داخستن</button>
+            </div>
+        </div>
+
+        <!-- شاشەی گۆڕینی یەکەکان -->
+        <div id="convModal" class="modal">
+            <div class="modal-content">
+                <select id="convType" onchange="updateConvUnits()" class="conv-input" style="flex-shrink: 0;">
+                    <option value="distance">دوری</option>
+                    <option value="mass">بارستایی</option>
+                    <option value="time_s">چرکە</option>
+                    <option value="hertz">لەرەلەر</option>
+                    <option value="time">کات</option>
+                </select>
+                
+                <div class="conv-row">
+                    <input type="number" id="convInput" oninput="doConversion()" class="conv-input" placeholder="بڕەکە" style="flex:1;">
+                    <select id="convFrom" onchange="doConversion()" class="conv-input" style="width:100px;"></select>
+                </div>
+                
+                <div style="display: flex; justify-content: center; align-items: center; font-size: 24px; color:#ff9f0a; margin: 5px 0; flex-shrink: 0; font-family: Arial, sans-serif;">&#8595;</div>
+                
+                <div class="conv-row">
+                    <input type="text" id="convOutput" class="conv-input" readonly placeholder="ئەنجام" style="flex:1; background:#2b2b36; border-color: #86b5b1;">
+                    <select id="convTo" onchange="doConversion()" class="conv-input" style="width:100px;"></select>
+                </div>
+
+                <div id="convSteps"></div>
+
+                <div style="display: flex; gap: 10px; flex-shrink: 0;">
+                    <button class="btn-action" style="flex:1; height: 50px; background-color:#34c759; font-family: Arial, sans-serif; font-style: normal; font-size: 18px; border-radius: 8px;" onclick="showConvSteps()">شیکار</button>
+                    <button class="btn-action" style="flex:1; height: 50px; background-color:#0a84ff; font-family: Arial, sans-serif; font-style: normal; font-size: 18px; border-radius: 8px;" onclick="insertConvResult()">بۆ شاشە</button>
+                </div>
+
+                <button class="btn-close-modal" style="background:#555;" onclick="closeConv()">داخستن</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentExpression = "";
+        let isInv = false;
+        let isPowerOff = false;
+        let lastAns = 0;
+        let engShift = 0;
+        let justCalculated = false;
+        let invTimeout = null;
+
+        function removeENotation(numStr) {
+            return numStr.toString().replace(/e\+?(\-?\d+)/gi, 'x10^$1');
+        }
+
+        const convPowers = {
+            distance: { m: 0, cm: -2, mm: -3, nm: -9, "μm": -6, km: 3, Mm: 6 },
+            mass: { g: 0, kg: 3, mg: -3, "μg": -6 },
+            time_s: { s: 0, ms: -3, "μs": -6, ns: -9 },
+            hertz: { Hz: 0, kHz: 3, MHz: 6, GHz: 9 }
+        };
+
+        const convData = {
+            time: { s: 1, min: 60, h: 3600 } 
+        };
+
+        function getMetricType(type) {
+            return ['distance', 'mass', 'time_s', 'hertz'].includes(type);
+        }
+
+        function updateDisplay() {
+            if (isPowerOff) return;
+            if (currentExpression === "") {
+                display.innerHTML = "";
+            } else {
+                let formatted = currentExpression;
+                
+                formatted = formatted.replace(/x10\^([\-\d\.]+)/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%;">$1</sup></span>');
+                formatted = formatted.replace(/x10\^\(([^)]+)\)/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%;">($1)</sup></span>');
+                formatted = formatted.replace(/x10\^/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%; border: 1px dashed #666; padding: 0 5px;">&nbsp;</sup></span>');
+
+                formatted = formatted.replace(/\^([\-\d\.]+)/g, '<sup style="font-size: 75%;">$1</sup>');
+                formatted = formatted.replace(/\^\(([^)]+)\)/g, '<sup style="font-size: 75%;">($1)</sup>');
+                formatted = formatted.replace(/\^/g, '<sup style="font-size: 75%; border: 1px dashed #666; padding: 0 5px;">&nbsp;</sup>');
+
+                display.innerHTML = formatted;
+            }
+            scrollRight();
+        }
+
+        function scrollRight() {
+            setTimeout(() => {
+                display.scrollLeft = display.scrollWidth;
+            }, 10);
+        }
+
+        function turnOffInvIfActive() {
+            if (isInv) {
+                isInv = false;
+                clearTimeout(invTimeout);
+                updateInvUI();
+            }
+        }
+
+        function insert(val) {
+            if (isPowerOff) return;
+
+            if (justCalculated) {
+                const operators = ['+', '-', 'x', '÷', '^', '²', '³'];
+                if (operators.includes(val)) {
+                    justCalculated = false;
+                } else {
+                    currentExpression = "";
+                    engShift = 0;
+                    justCalculated = false;
+                }
+            }
+
+            currentExpression += val;
+            updateDisplay();
+            turnOffInvIfActive();
+        }
+
+        function acCore() {
+            currentExpression = "";
+            engShift = 0;
+            justCalculated = false;
+            updateDisplay();
+        }
+
+        function ac() {
+            if (isPowerOff) {
+                isPowerOff = false;
+                display.style.display = 'flex';
+                display.style.justifyContent = 'center';
+                display.style.alignItems = 'center';
+                display.style.lineHeight = 'normal';
+                display.style.fontFamily = 'Arial, sans-serif';
+                display.style.fontStyle = 'normal';
+                display.innerHTML = 'بەخێر هاتنەوە';
+                
+                setTimeout(() => { 
+                    if (!isPowerOff) {
+                        display.style.display = '';
+                        display.style.justifyContent = '';
+                        display.style.alignItems = '';
+                        display.style.lineHeight = '90px';
+                        display.style.fontFamily = "";
+                        display.style.fontStyle = 'normal';
+                        acCore(); 
+                    }
+                }, 1500);
+                return;
+            }
+            
+            if (isInv) {
+                isPowerOff = true;
+                display.style.display = 'flex';
+                display.style.justifyContent = 'center';
+                display.style.alignItems = 'center';
+                display.style.lineHeight = 'normal';
+                display.style.fontFamily = 'Arial, sans-serif';
+                display.style.fontStyle = 'normal';
+                display.innerHTML = 'خواتان لەگەڵ';
+                isInv = false;
+                clearTimeout(invTimeout);
+                updateInvUI();
+                return;
+            }
+
+            acCore();
+        }
+
+        function del() {
+            if (isPowerOff || currentExpression === "") return;
+            justCalculated = false;
+            currentExpression = currentExpression.slice(0, -1);
+            updateDisplay();
+            turnOffInvIfActive();
+        }
+
+        function updateInvUI() {
+            const invBtn = document.getElementById('btn-inv');
+            const sinBtn = document.getElementById('btn-sin');
+            const cosBtn = document.getElementById('btn-cos');
+            const tanBtn = document.getElementById('btn-tan');
+            const sqBtn = document.getElementById('btn-sq');
+            const cbBtn = document.getElementById('btn-cb');
+            const logBtn = document.getElementById('btn-log');
+            const acBtn = document.getElementById('btn-ac');
+
+            if (isInv) {
+                invBtn.classList.add('active');
+                sinBtn.innerHTML = 'sin⁻¹';
+                cosBtn.innerHTML = 'cos⁻¹';
+                tanBtn.innerHTML = 'tan⁻¹';
+                sqBtn.innerHTML = '√';
+                cbBtn.innerHTML = '∛';
+                logBtn.innerHTML = '10^';
+                acBtn.innerHTML = 'OFF';
+            } else {
+                invBtn.classList.remove('active');
+                sinBtn.innerHTML = 'sin';
+                cosBtn.innerHTML = 'cos';
+                tanBtn.innerHTML = 'tan';
+                sqBtn.innerHTML = 'x²';
+                cbBtn.innerHTML = 'x³';
+                logBtn.innerHTML = 'log';
+                acBtn.innerHTML = 'AC';
+            }
+        }
+
+        function toggleInv() {
+            if (isPowerOff) return;
+            isInv = !isInv;
+            updateInvUI();
+
+            if (isInv) {
+                clearTimeout(invTimeout);
+                invTimeout = setTimeout(() => {
+                    if (isInv) {
+                        isInv = false;
+                        updateInvUI();
+                    }
+                }, 4000);
+            } else {
+                clearTimeout(invTimeout);
+            }
+        }
+
+        function handleTrig(type) {
+            if (!isInv) insert(type + '(');
+            else insert(type + '⁻¹(');
+        }
+
+        function handlePowerRoot(type) {
+            if (!isInv) {
+                if (type === 'sq') insert('²');
+                else insert('³');
+            } else {
+                if (type === 'sq') insert('√(');
+                else insert('∛(');
+            }
+        }
+
+        function handleLog() {
+            if (isPowerOff) return;
+            if (!isInv) insert('log(');
+            else insert('10^(');
+        }
+
+        function handleEng() {
+            if (isPowerOff || currentExpression === "") return;
+            try {
+                let exprToEval = currentExpression;
+                let openCount = (exprToEval.match(/\(/g) || []).length;
+                let closeCount = (exprToEval.match(/\)/g) || []).length;
+                while(openCount > closeCount) {
+                    exprToEval += ')';
+                    closeCount++;
+                }
+
+                let expr = parseExprForEval(exprToEval);
+                let currentVal = eval(expr);
+                
+                if (currentVal === undefined || isNaN(currentVal)) return;
+
+                if (!isInv) {
+                    engShift++;
+                } else {
+                    engShift--;
+                }
+
+                let mantissa = currentVal / Math.pow(10, engShift);
+                mantissa = parseFloat(mantissa.toPrecision(10));
+                
+                let cleanedMantissa = removeENotation(mantissa);
+                
+                currentExpression = cleanedMantissa + 'x10^' + engShift;
+                justCalculated = true; 
+                updateDisplay();
+                turnOffInvIfActive();
+            } catch(e) {}
+        }
+
+        const consModal = document.getElementById('consModal');
+        function openCons() { if (!isPowerOff) consModal.style.display = 'flex'; }
+        function closeCons() { consModal.style.display = 'none'; }
+        function insertCons(val) {
+            insert(val);
+            closeCons();
+        }
+
+        const convModal = document.getElementById('convModal');
+        function openConv() { 
+            if (!isPowerOff) {
+                convModal.style.display = 'flex'; 
+                document.getElementById('convSteps').innerHTML = '';
+                updateConvUnits(); 
+            }
+        }
+        function closeConv() { convModal.style.display = 'none'; }
+        
+        function updateConvUnits() {
+            const type = document.getElementById('convType').value;
+            const fromSel = document.getElementById('convFrom');
+            const toSel = document.getElementById('convTo');
+            
+            fromSel.innerHTML = '';
+            toSel.innerHTML = '';
+            
+            let obj = getMetricType(type) ? convPowers[type] : convData[type];
+            for (let unit in obj) {
+                fromSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                toSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+            }
+            
+            if(type === 'distance') { fromSel.value = 'cm'; toSel.value = 'm'; } 
+            else if(type === 'mass') { fromSel.value = 'g'; toSel.value = 'kg'; }
+            else if(type === 'time_s') { fromSel.value = 'ms'; toSel.value = 's'; }
+            else if(type === 'hertz') { fromSel.value = 'kHz'; toSel.value = 'Hz'; }
+            else { fromSel.value = 'h'; toSel.value = 'min'; }
+            
+            document.getElementById('convSteps').innerHTML = '';
+            doConversion();
+        }
+
+        function doConversion() {
+            const type = document.getElementById('convType').value;
+            const val = parseFloat(document.getElementById('convInput').value);
+            const fromUnit = document.getElementById('convFrom').value;
+            const toUnit = document.getElementById('convTo').value;
+            const outBox = document.getElementById('convOutput');
+            const stepsBox = document.getElementById('convSteps');
+            
+            stepsBox.innerHTML = ''; 
+            
+            if(isNaN(val)) {
+                outBox.value = '';
+                return;
+            }
+            
+            if (getMetricType(type)) {
+                let p1 = convPowers[type][fromUnit];
+                let p2 = convPowers[type][toUnit];
+                let diff = p1 - p2;
+                let outVal = val * Math.pow(10, diff);
+                outBox.value = removeENotation(parseFloat(outVal.toPrecision(10)));
+            } else {
+                const inBase = val * convData[type][fromUnit];
+                const outVal = inBase / convData[type][toUnit];
+                outBox.value = removeENotation(parseFloat(outVal.toPrecision(10)));
+            }
+        }
+
+        function showConvSteps() {
+            const type = document.getElementById('convType').value;
+            const val = parseFloat(document.getElementById('convInput').value);
+            const fromUnit = document.getElementById('convFrom').value;
+            const toUnit = document.getElementById('convTo').value;
+            const stepsBox = document.getElementById('convSteps');
+
+            if(isNaN(val)) {
+                stepsBox.innerHTML = '';
+                return;
+            }
+
+            if (getMetricType(type)) {
+                let p1 = convPowers[type][fromUnit];
+                let p2 = convPowers[type][toUnit];
+                let diff = p1 - p2;
+                let outVal = val * Math.pow(10, diff);
+                let formattedOut = removeENotation(parseFloat(outVal.toPrecision(10)));
+                
+                stepsBox.innerHTML = `
+                    <div style="color: white; font-family: Arial, sans-serif;">
+                        ${val}${fromUnit} = ${val} &times; 10<sup>${diff}</sup> = <span style="color:#86b5b1">${formattedOut}${toUnit}</span>
+                    </div>
+                `;
+            } else {
+                const ratio = convData[type][fromUnit] / convData[type][toUnit];
+                const outVal = val * ratio;
+                let formattedOut = removeENotation(parseFloat(outVal.toPrecision(10)));
+
+                if (ratio >= 1) {
+                    let rStr = removeENotation(parseFloat(ratio.toPrecision(10)));
+                    stepsBox.innerHTML = `
+                        <div style="color: white; font-family: Arial, sans-serif;">
+                            ${val}${fromUnit} = ${val} &times; ${rStr} = <span style="color:#86b5b1">${formattedOut}${toUnit}</span>
+                        </div>
+                    `;
+                } else {
+                    let factor = 1 / ratio;
+                    let fStr = removeENotation(parseFloat(factor.toPrecision(10)));
+                    stepsBox.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: white; font-family: Arial, sans-serif;">
+                            <div>${val}${fromUnit} = </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="border-bottom: 2px solid #86b5b1; padding: 0 5px;">${val}${fromUnit}</div>
+                                <div style="padding: 0 5px;">${fStr}</div>
+                            </div>
+                            <div> = <span style="color:#86b5b1">${formattedOut}${toUnit}</span></div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function insertConvResult() {
+            const outBox = document.getElementById('convOutput').value;
+            if(outBox !== '') {
+                insert(outBox);
+            }
+            closeConv();
+        }
+
+        function sinDeg(degrees) { return Math.sin(degrees * (Math.PI / 180)); }
+        function cosDeg(degrees) { return Math.cos(degrees * (Math.PI / 180)); }
+        function tanDeg(degrees) { return Math.tan(degrees * (Math.PI / 180)); }
+        function asinDeg(val) { return Math.asin(val) * (180 / Math.PI); }
+        function acosDeg(val) { return Math.acos(val) * (180 / Math.PI); }
+        function atanDeg(val) { return Math.atan(val) * (180 / Math.PI); }
+
+        function parseExprForEval(expr) {
+            expr = expr.replace(/(\d)(π)/g, '$1*$2')
+                       .replace(/(π)(\d)/g, '$1*$2')
+                       .replace(/(\d)(\()/g, '$1*$2')
+                       .replace(/(\))(\d)/g, '$1*$2')
+                       .replace(/(π)(\()/g, '$1*$2')
+                       .replace(/(\))(π)/g, '$1*$2')
+                       .replace(/(\d)(sin|cos|tan|log|10\^\(|√|∛)/g, '$1*$2')
+                       .replace(/(\))(sin|cos|tan|log|10\^\(|√|∛)/g, '$1*$2');
+
+            return expr.replace(/sin⁻¹\(/g, 'asinDeg(')
+                       .replace(/cos⁻¹\(/g, 'acosDeg(')
+                       .replace(/tan⁻¹\(/g, 'atanDeg(')
+                       .replace(/sin\(/g, 'sinDeg(')
+                       .replace(/cos\(/g, 'cosDeg(')
+                       .replace(/tan\(/g, 'tanDeg(')
+                       .replace(/log\(/g, 'Math.log10(')
+                       .replace(/10\^\(/g, '10**(')
+                       .replace(/√\(/g, 'Math.sqrt(')
+                       .replace(/∛\(/g, 'Math.cbrt(')
+                       .replace(/÷/g, '/')
+                       .replace(/x10\^/g, '*10**')
+                       .replace(/x/g, '*') 
+                       .replace(/²/g, '**2')
+                       .replace(/³/g, '**3')
+                       .replace(/\^/g, '**')
+                       .replace(/π/g, 'Math.PI')
+                       .replace(/ANS/g, lastAns);
+        }
+
+        function calc() {
+            if (isPowerOff || currentExpression === "") return;
+            try {
+                let exprToEval = currentExpression;
+                let openCount = (exprToEval.match(/\(/g) || []).length;
+                let closeCount = (exprToEval.match(/\)/g) || []).length;
+                while(openCount > closeCount) {
+                    exprToEval += ')';
+                    closeCount++;
+                }
+
+                let expr = parseExprForEval(exprToEval);
+                let result = eval(expr);
+                
+                if(result !== undefined) {
+                   result = parseFloat(result.toPrecision(10));
+                   let resStr = removeENotation(result.toString());
+                   currentExpression = resStr;
+                   lastAns = result; 
+                   engShift = 0; 
+                   justCalculated = true; 
+                }
+            } catch(e) {
+                display.innerHTML = '<span style="color:#ff3b30;">Error</span>';
+                setTimeout(acCore, 1200);
+                return;
+            }
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>

@@ -54,6 +54,7 @@
             padding: 0 15px;
             overflow: hidden;
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+            position: relative;
         }
 
         #display {
@@ -257,8 +258,8 @@
             color: white;
             border: 2px solid #444;
             border-radius: 8px;
-            font-family: Arial, sans-serif;
-            font-style: normal;
+            font-family: 'Cambria Math', 'Times New Roman', serif !important;
+            font-style: italic !important;
             font-weight: bold;
             font-size: 18px;
             outline: none;
@@ -271,15 +272,30 @@
         #convSteps {
             flex: 1; 
             margin: 10px 0;
-            background: #1c1c25;
+            background: #86b5b1; 
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3); 
             border-radius: 8px;
             padding: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(20px, 5.5vmin, 32px); 
+            font-size: clamp(18px, 5vmin, 28px); 
             direction: ltr;
             overflow: auto;
+            font-family: 'Cambria Math', 'Times New Roman', serif !important;
+            font-style: italic !important;
+        }
+
+        .info-section {
+            margin-top: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 1.8;
+            font-size: clamp(16px, 4.5vmin, 22px);
         }
     </style>
 </head>
@@ -301,7 +317,7 @@
             <button id="btn-log" onclick="handleLog()">log</button>
             <button id="btn-sq" onclick="handlePowerRoot('sq')">x²</button>
             <button id="btn-cb" onclick="handlePowerRoot('cb')">x³</button>
-            <button class="btn-operator" onclick="insert('^')">^</button>
+            <button id="btn-power" class="btn-operator" onclick="handlePower()">xʸ</button>
 
             <!-- ڕیزی سێیەم -->
             <button onclick="insert('(')">(</button>
@@ -328,7 +344,7 @@
             <button class="btn-operator" onclick="insert('-')">-</button>
 
             <!-- ڕیزی حەوتەم -->
-            <button class="btn-cons" onclick="openCons()">cons</button>
+            <button id="btn-cons" class="btn-cons" onclick="openCons()">cons</button>
             <button class="btn-num" onclick="insert('0')">0</button>
             <button class="btn-num" onclick="insert('.')">.</button>
             <button class="btn-operator" onclick="insert('+')">+</button>
@@ -343,41 +359,51 @@
         <!-- شاشەی نەگۆڕەکان -->
         <div id="consModal" class="modal">
             <div class="modal-content" style="overflow-y: auto;">
-                <div class="const-item" onclick="insertCons('1.6x10^-19')">
-                    <span class="const-sym">e = 1.6 x 10<sup>-19</sup> C</span>
+                <div class="const-item" onclick="insertCons('1.6x10⁻¹⁹')">
+                    <span class="const-sym">e = 1.6 x 10⁻¹⁹ C</span>
                 </div>
-                <div class="const-item" onclick="insertCons('1.67x10^-27')">
-                    <span class="const-sym">m<sub>p</sub> = 1.67 x 10<sup>-27</sup> kg</span>
+                <div class="const-item" onclick="insertCons('1.67x10⁻²⁷')">
+                    <span class="const-sym">m<sub>p</sub> = 1.67 x 10⁻²⁷ kg</span>
                 </div>
-                <div class="const-item" onclick="insertCons('9.11x10^-31')">
-                    <span class="const-sym">m<sub>e</sub> = 9.11 x 10<sup>-31</sup> kg</span>
+                <div class="const-item" onclick="insertCons('9.11x10⁻³¹')">
+                    <span class="const-sym">m<sub>e</sub> = 9.11 x 10⁻³¹ kg</span>
                 </div>
-                <div class="const-item" onclick="insertCons('(4x3.14159x10^-7)')">
-                    <span class="const-sym">μ<sub>0</sub> = 4π x 10<sup>-7</sup> T.m/A</span>
+                <div class="const-item" onclick="insertCons('(4x3.14159x10⁻⁷)')">
+                    <span class="const-sym">μ<sub>0</sub> = 4π x 10⁻⁷ T.m/A</span>
                 </div>
-                <div class="const-item" onclick="insertCons('6.67x10^-11')">
-                    <span class="const-sym">G = 6.67 x 10<sup>-11</sup> N.m²/kg²</span>
+                <div class="const-item" onclick="insertCons('6.67x10⁻¹¹')">
+                    <span class="const-sym">G = 6.67 x 10⁻¹¹ N.m²/kg²</span>
                 </div>
-                <div class="const-item" onclick="insertCons('9x10^9')">
-                    <span class="const-sym">k = 9 x 10<sup>9</sup> N.m²/C²</span>
+                <div class="const-item" onclick="insertCons('9x10⁹')">
+                    <span class="const-sym">k = 9 x 10⁹ N.m²/C²</span>
                 </div>
                 <button class="btn-close-modal" onclick="closeCons()">داخستن</button>
+                
+                <div class="info-section">
+                    <div>م.ڕزگار ســــــــعید</div>
+                    <div>پسپۆڕی فیزیــــــــا</div>
+                    <div>ئامادەیی هەڵگورد</div>
+                    <div>پەیمانگای ژیــــــوا</div>
+                    <div style="direction: ltr; margin-top: 8px; color: #ff9f0a;">07702111022</div>
+                    <div style="direction: ltr; color: #ff9f0a;">07502294301</div>
+                </div>
             </div>
         </div>
 
         <!-- شاشەی گۆڕینی یەکەکان -->
         <div id="convModal" class="modal">
             <div class="modal-content">
-                <select id="convType" onchange="updateConvUnits()" class="conv-input" style="flex-shrink: 0;">
+                <select id="convType" onchange="updateConvUnits()" class="conv-input" style="flex-shrink: 0; font-style: normal !important;">
                     <option value="distance">دوری</option>
                     <option value="mass">بارستایی</option>
-                    <option value="time_s">چرکە</option>
+                    <option value="time_s">چرکە (یەکە بچووکەکان)</option>
                     <option value="hertz">لەرەلەر</option>
-                    <option value="time">کات</option>
+                    <option value="time">کات (یەکە گەورەکان)</option>
+                    <option value="temperature">پلەی گەرمی</option>
                 </select>
                 
                 <div class="conv-row">
-                    <input type="number" id="convInput" oninput="doConversion()" class="conv-input" placeholder="بڕەکە" style="flex:1;">
+                    <input type="number" step="any" id="convInput" oninput="doConversion()" class="conv-input" placeholder="بڕەکە" style="flex:1;">
                     <select id="convFrom" onchange="doConversion()" class="conv-input" style="width:100px;"></select>
                 </div>
                 
@@ -411,6 +437,59 @@
         let justCalculated = false;
         let invTimeout = null;
 
+        display.addEventListener('copy', function(e) {
+            if (currentExpression !== "") {
+                e.clipboardData.setData('text/plain', currentExpression);
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (localStorage.getItem('physical_lastAns') !== null) {
+                    lastAns = parseFloat(localStorage.getItem('physical_lastAns'));
+                }
+                if (localStorage.getItem('physical_expr') !== null) {
+                    currentExpression = localStorage.getItem('physical_expr');
+                    updateDisplay();
+                }
+            } catch(e) {}
+        });
+
+        function saveState() {
+            try {
+                localStorage.setItem('physical_expr', currentExpression);
+                localStorage.setItem('physical_lastAns', lastAns);
+            } catch(e) {}
+        }
+
+        function toUnicodeSuperscript(str) {
+            const map = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+                '-': '⁻', '+': '⁺'
+            };
+            return str.split('').map(c => map[c] || c).join('');
+        }
+
+        function formatNumberClean(num) {
+            if (num === 0) return "0";
+            let absNum = Math.abs(num);
+            
+            if (absNum >= 0.001 && absNum < 1000000) {
+                let rounded = Math.round(num * 1000) / 1000;
+                return rounded.toString();
+            } else {
+                let expStr = num.toExponential(3);
+                let parts = expStr.split('e');
+                let mantissa = parseFloat(parts[0]).toString();
+                let exponent = parseInt(parts[1]).toString();
+                
+                if (exponent === "0") return mantissa;
+                return mantissa + "x10" + toUnicodeSuperscript(exponent);
+            }
+        }
+
         function removeENotation(numStr) {
             return numStr.toString().replace(/e\+?(\-?\d+)/gi, 'x10^$1');
         }
@@ -422,9 +501,8 @@
             hertz: { Hz: 0, kHz: 3, MHz: 6, GHz: 9 }
         };
 
-        const convData = {
-            time: { s: 1, min: 60, h: 3600 } 
-        };
+        const timeSeq = ['year', 'day', 'h', 'min', 's'];
+        const timeFactors = [365, 24, 60, 60]; 
 
         function getMetricType(type) {
             return ['distance', 'mass', 'time_s', 'hertz'].includes(type);
@@ -432,22 +510,28 @@
 
         function updateDisplay() {
             if (isPowerOff) return;
+            
+            display.style.display = '';
+            display.style.justifyContent = '';
+            display.style.alignItems = '';
+            display.style.lineHeight = '90px';
+            display.style.whiteSpace = 'nowrap';
+            display.style.overflow = '';
+            display.style.position = '';
+            
             if (currentExpression === "") {
                 display.innerHTML = "";
             } else {
                 let formatted = currentExpression;
                 
-                formatted = formatted.replace(/x10\^([\-\d\.]+)/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%;">$1</sup></span>');
-                formatted = formatted.replace(/x10\^\(([^)]+)\)/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%;">($1)</sup></span>');
-                formatted = formatted.replace(/x10\^/g, '<span style="padding: 0 2px;">x10<sup style="font-size: 75%; border: 1px dashed #666; padding: 0 5px;">&nbsp;</sup></span>');
-
-                formatted = formatted.replace(/\^([\-\d\.]+)/g, '<sup style="font-size: 75%;">$1</sup>');
-                formatted = formatted.replace(/\^\(([^)]+)\)/g, '<sup style="font-size: 75%;">($1)</sup>');
-                formatted = formatted.replace(/\^/g, '<sup style="font-size: 75%; border: 1px dashed #666; padding: 0 5px;">&nbsp;</sup>');
+                formatted = formatted.replace(/\^([\-\d\.]+)/g, '<sup style="font-size: 75%; font-style: normal;">$1</sup>');
+                formatted = formatted.replace(/\^\(([^)]+)\)/g, '<sup style="font-size: 75%; font-style: normal;">($1)</sup>');
+                formatted = formatted.replace(/\^/g, '<sup style="font-size: 75%; font-style: normal; border: 1px dashed #666; padding: 0 5px;">&nbsp;</sup>');
 
                 display.innerHTML = formatted;
             }
             scrollRight();
+            saveState();
         }
 
         function scrollRight() {
@@ -468,7 +552,7 @@
             if (isPowerOff) return;
 
             if (justCalculated) {
-                const operators = ['+', '-', 'x', '÷', '^', '²', '³'];
+                const operators = ['+', '-', 'x', '÷', '^', '²', '³', '√'];
                 if (operators.includes(val)) {
                     justCalculated = false;
                 } else {
@@ -533,14 +617,6 @@
             acCore();
         }
 
-        function del() {
-            if (isPowerOff || currentExpression === "") return;
-            justCalculated = false;
-            currentExpression = currentExpression.slice(0, -1);
-            updateDisplay();
-            turnOffInvIfActive();
-        }
-
         function updateInvUI() {
             const invBtn = document.getElementById('btn-inv');
             const sinBtn = document.getElementById('btn-sin');
@@ -549,6 +625,7 @@
             const sqBtn = document.getElementById('btn-sq');
             const cbBtn = document.getElementById('btn-cb');
             const logBtn = document.getElementById('btn-log');
+            const powerBtn = document.getElementById('btn-power');
             const acBtn = document.getElementById('btn-ac');
 
             if (isInv) {
@@ -558,7 +635,8 @@
                 tanBtn.innerHTML = 'tan⁻¹';
                 sqBtn.innerHTML = '√';
                 cbBtn.innerHTML = '∛';
-                logBtn.innerHTML = '10^';
+                logBtn.innerHTML = '10ˣ';
+                powerBtn.innerHTML = '□√□';
                 acBtn.innerHTML = 'OFF';
             } else {
                 invBtn.classList.remove('active');
@@ -568,6 +646,7 @@
                 sqBtn.innerHTML = 'x²';
                 cbBtn.innerHTML = 'x³';
                 logBtn.innerHTML = 'log';
+                powerBtn.innerHTML = 'xʸ';
                 acBtn.innerHTML = 'AC';
             }
         }
@@ -605,10 +684,16 @@
             }
         }
 
+        function handlePower() {
+            if (isPowerOff) return;
+            if (!isInv) insert('^');
+            else insert('√');
+        }
+
         function handleLog() {
             if (isPowerOff) return;
             if (!isInv) insert('log(');
-            else insert('10^(');
+            else insert('10^');
         }
 
         function handleEng() {
@@ -625,7 +710,7 @@
                 let expr = parseExprForEval(exprToEval);
                 let currentVal = eval(expr);
                 
-                if (currentVal === undefined || isNaN(currentVal)) return;
+                if (currentVal === undefined || isNaN(currentVal) || !isFinite(currentVal)) return;
 
                 if (!isInv) {
                     engShift++;
@@ -634,11 +719,13 @@
                 }
 
                 let mantissa = currentVal / Math.pow(10, engShift);
-                mantissa = parseFloat(mantissa.toPrecision(10));
+                let roundedMantissa = Math.round(mantissa * 1000) / 1000;
                 
-                let cleanedMantissa = removeENotation(mantissa);
+                if (roundedMantissa === 0 && mantissa !== 0) {
+                    roundedMantissa = parseFloat(mantissa.toPrecision(3));
+                }
                 
-                currentExpression = cleanedMantissa + 'x10^' + engShift;
+                currentExpression = roundedMantissa.toString() + 'x10' + toUnicodeSuperscript(engShift.toString());
                 justCalculated = true; 
                 updateDisplay();
                 turnOffInvIfActive();
@@ -646,8 +733,13 @@
         }
 
         const consModal = document.getElementById('consModal');
-        function openCons() { if (!isPowerOff) consModal.style.display = 'flex'; }
+        
+        function openCons() { 
+            if (!isPowerOff) consModal.style.display = 'flex'; 
+        }
+        
         function closeCons() { consModal.style.display = 'none'; }
+        
         function insertCons(val) {
             insert(val);
             closeCons();
@@ -664,6 +756,10 @@
         function closeConv() { convModal.style.display = 'none'; }
         
         function updateConvUnits() {
+            document.getElementById('convInput').value = '';
+            document.getElementById('convOutput').value = '';
+            document.getElementById('convSteps').innerHTML = '';
+
             const type = document.getElementById('convType').value;
             const fromSel = document.getElementById('convFrom');
             const toSel = document.getElementById('convTo');
@@ -671,19 +767,32 @@
             fromSel.innerHTML = '';
             toSel.innerHTML = '';
             
-            let obj = getMetricType(type) ? convPowers[type] : convData[type];
-            for (let unit in obj) {
-                fromSel.innerHTML += `<option value="${unit}">${unit}</option>`;
-                toSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+            if (getMetricType(type)) {
+                let obj = convPowers[type];
+                for (let unit in obj) {
+                    fromSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                    toSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                }
+            } else if (type === 'time') {
+                for (let unit of timeSeq) {
+                    fromSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                    toSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                }
+            } else if (type === 'temperature') {
+                const tempUnits = ['C', 'F', 'K'];
+                for (let unit of tempUnits) {
+                    fromSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                    toSel.innerHTML += `<option value="${unit}">${unit}</option>`;
+                }
             }
             
-            if(type === 'distance') { fromSel.value = 'cm'; toSel.value = 'm'; } 
-            else if(type === 'mass') { fromSel.value = 'g'; toSel.value = 'kg'; }
+            if(type === 'distance') { fromSel.value = 'km'; toSel.value = 'cm'; } 
+            else if(type === 'mass') { fromSel.value = 'kg'; toSel.value = 'g'; }
             else if(type === 'time_s') { fromSel.value = 'ms'; toSel.value = 's'; }
             else if(type === 'hertz') { fromSel.value = 'kHz'; toSel.value = 'Hz'; }
-            else { fromSel.value = 'h'; toSel.value = 'min'; }
+            else if(type === 'temperature') { fromSel.value = 'C'; toSel.value = 'F'; }
+            else { fromSel.value = 'year'; toSel.value = 'day'; }
             
-            document.getElementById('convSteps').innerHTML = '';
             doConversion();
         }
 
@@ -707,11 +816,28 @@
                 let p2 = convPowers[type][toUnit];
                 let diff = p1 - p2;
                 let outVal = val * Math.pow(10, diff);
-                outBox.value = removeENotation(parseFloat(outVal.toPrecision(10)));
-            } else {
-                const inBase = val * convData[type][fromUnit];
-                const outVal = inBase / convData[type][toUnit];
-                outBox.value = removeENotation(parseFloat(outVal.toPrecision(10)));
+                outBox.value = formatNumberClean(outVal);
+            } else if (type === 'temperature') {
+                let c = val;
+                if (fromUnit === 'K') c = val - 273.15;
+                else if (fromUnit === 'F') c = (val - 32) / 1.8;
+                
+                let outVal = c;
+                if (toUnit === 'K') outVal = c + 273.15;
+                else if (toUnit === 'F') outVal = (c * 1.8) + 32;
+                
+                outBox.value = formatNumberClean(outVal);
+            } else if (type === 'time') {
+                let startIndex = timeSeq.indexOf(fromUnit);
+                let endIndex = timeSeq.indexOf(toUnit);
+                let currentVal = val;
+                
+                if (startIndex < endIndex) {
+                    for (let i = startIndex; i < endIndex; i++) currentVal *= timeFactors[i];
+                } else {
+                    for (let i = startIndex; i > endIndex; i--) currentVal /= timeFactors[i-1];
+                }
+                outBox.value = formatNumberClean(currentVal);
             }
         }
 
@@ -727,44 +853,193 @@
                 return;
             }
 
-            if (getMetricType(type)) {
-                let p1 = convPowers[type][fromUnit];
-                let p2 = convPowers[type][toUnit];
-                let diff = p1 - p2;
-                let outVal = val * Math.pow(10, diff);
-                let formattedOut = removeENotation(parseFloat(outVal.toPrecision(10)));
-                
-                stepsBox.innerHTML = `
-                    <div style="color: white; font-family: Arial, sans-serif;">
-                        ${val}${fromUnit} = ${val} &times; 10<sup>${diff}</sup> = <span style="color:#86b5b1">${formattedOut}${toUnit}</span>
-                    </div>
-                `;
-            } else {
-                const ratio = convData[type][fromUnit] / convData[type][toUnit];
-                const outVal = val * ratio;
-                let formattedOut = removeENotation(parseFloat(outVal.toPrecision(10)));
+            let fmtVal = formatNumberClean(val);
 
-                if (ratio >= 1) {
-                    let rStr = removeENotation(parseFloat(ratio.toPrecision(10)));
+            if (getMetricType(type)) {
+                let baseUnit = '';
+                if (type === 'distance') baseUnit = 'm';
+                else if (type === 'mass') baseUnit = 'g';
+                else if (type === 'time_s') baseUnit = 's';
+                else if (type === 'hertz') baseUnit = 'Hz';
+
+                if (fromUnit === baseUnit || toUnit === baseUnit || fromUnit === toUnit) {
+                    let p1 = convPowers[type][fromUnit];
+                    let p2 = convPowers[type][toUnit];
+                    let diff = p1 - p2;
+                    let outVal = val * Math.pow(10, diff);
+                    let formattedOut = formatNumberClean(outVal);
+                    
                     stepsBox.innerHTML = `
-                        <div style="color: white; font-family: Arial, sans-serif;">
-                            ${val}${fromUnit} = ${val} &times; ${rStr} = <span style="color:#86b5b1">${formattedOut}${toUnit}</span>
+                        <div style="color: #000; text-align: center; width: 100%;">
+                            <div style="direction: ltr;">${fmtVal}${fromUnit} = ${fmtVal} &times; 10<sup style="font-style: normal;">${diff}</sup> = <span style="color:#d32f2f">${formattedOut}${toUnit}</span></div>
                         </div>
                     `;
                 } else {
-                    let factor = 1 / ratio;
-                    let fStr = removeENotation(parseFloat(factor.toPrecision(10)));
+                    let pFrom = convPowers[type][fromUnit];
+                    let pBase = 0;
+                    let pTo = convPowers[type][toUnit];
+                    
+                    let diff1 = pFrom - pBase;
+                    let valInBase = val * Math.pow(10, diff1);
+                    let formattedBase = formatNumberClean(valInBase);
+                    
+                    let diff2 = pBase - pTo;
+                    let finalOut = valInBase * Math.pow(10, diff2);
+                    let formattedFinal = formatNumberClean(finalOut);
+                    
                     stepsBox.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: white; font-family: Arial, sans-serif;">
-                            <div>${val}${fromUnit} = </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <div style="border-bottom: 2px solid #86b5b1; padding: 0 5px;">${val}${fromUnit}</div>
-                                <div style="padding: 0 5px;">${fStr}</div>
-                            </div>
-                            <div> = <span style="color:#86b5b1">${formattedOut}${toUnit}</span></div>
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 85%;">
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">سەرەتا ${fromUnit} دەگۆڕین بۆ ${baseUnit}</div>
+                            <div style="direction: ltr; margin-bottom: 15px;">${fmtVal}${fromUnit} = ${fmtVal} &times; 10<sup style="font-style: normal;">${diff1}</sup> = ${formattedBase}${baseUnit}</div>
+                            
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">پاشان ${baseUnit} دەگۆڕین بۆ ${toUnit}</div>
+                            <div style="direction: ltr;">${formattedBase}${baseUnit} = ${formattedBase} &times; 10<sup style="font-style: normal;">${diff2}</sup> = <span style="color:#d32f2f">${formattedFinal}${toUnit}</span></div>
                         </div>
                     `;
                 }
+            } else if (type === 'temperature') {
+                if (fromUnit === toUnit) {
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%;">
+                            <div style="direction: ltr;">T<sub>${fromUnit}</sub> = <span style="color:#d32f2f">${fmtVal}&deg;${toUnit}</span></div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                if (fromUnit === 'C' && toUnit === 'K') {
+                    let kVal = val + 273.15;
+                    let fmtK = formatNumberClean(kVal);
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 85%;">
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">یاسای گۆڕینی سیلیزی بۆ کڵڤن</div>
+                            <div style="margin-bottom: 5px; direction: ltr; color: #444;">T<sub>K</sub> = T<sub>C</sub> + 273.15</div>
+                            <div style="direction: ltr;">T<sub>K</sub> = ${fmtVal} + 273.15 = <span style="color:#d32f2f">${fmtK}K</span></div>
+                        </div>
+                    `;
+                } else if (fromUnit === 'K' && toUnit === 'C') {
+                    let cVal = val - 273.15;
+                    let fmtC = formatNumberClean(cVal);
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 85%;">
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">یاسای گۆڕینی کڵڤن بۆ سیلیزی</div>
+                            <div style="margin-bottom: 5px; direction: ltr; color: #444;">T<sub>C</sub> = T<sub>K</sub> - 273.15</div>
+                            <div style="direction: ltr;">T<sub>C</sub> = ${fmtVal} - 273.15 = <span style="color:#d32f2f">${fmtC}&deg;C</span></div>
+                        </div>
+                    `;
+                } 
+                else if (fromUnit === 'C' && toUnit === 'F') {
+                    let fVal = (val * 1.8) + 32;
+                    let fmtF = formatNumberClean(fVal);
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 85%;">
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">یاسای گۆڕینی سیلیزی بۆ فەهرەنایت</div>
+                            <div style="margin-bottom: 5px; direction: ltr; color: #444;">T<sub>F</sub> = (T<sub>C</sub> &times; 1.8) + 32</div>
+                            <div style="direction: ltr;">T<sub>F</sub> = (${fmtVal} &times; 1.8) + 32 = <span style="color:#d32f2f">${fmtF}&deg;F</span></div>
+                        </div>
+                    `;
+                } else if (fromUnit === 'F' && toUnit === 'C') {
+                    let cVal = (val - 32) / 1.8;
+                    let fmtC = formatNumberClean(cVal);
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 85%;">
+                            <div style="margin-bottom: 5px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">یاسای گۆڕینی فەهرەنایت بۆ سیلیزی</div>
+                            <div style="margin-bottom: 5px; direction: ltr; color: #444;">T<sub>C</sub> = (T<sub>F</sub> - 32) &div; 1.8</div>
+                            <div style="direction: ltr;">T<sub>C</sub> = (${fmtVal} - 32) &div; 1.8 = <span style="color:#d32f2f">${fmtC}&deg;C</span></div>
+                        </div>
+                    `;
+                } 
+                else {
+                    let step1Val, step2Val, formula1, formula2, midUnitName, midSymbol, fromUnitName, toUnitName, formula1_val, formula2_val;
+                    if (fromUnit === 'K' && toUnit === 'F') {
+                        step1Val = val - 273.15;
+                        step2Val = (step1Val * 1.8) + 32;
+                        formula1 = 'T<sub>C</sub> = T<sub>K</sub> - 273.15';
+                        formula1_val = `T<sub>C</sub> = ${fmtVal} - 273.15`;
+                        formula2 = 'T<sub>F</sub> = (T<sub>C</sub> &times; 1.8) + 32';
+                        let fmtMid = formatNumberClean(step1Val);
+                        formula2_val = `T<sub>F</sub> = (${fmtMid} &times; 1.8) + 32`;
+                        midUnitName = 'سیلیزی'; midSymbol = '&deg;C';
+                        fromUnitName = 'کڵڤن'; toUnitName = 'فەهرەنایت';
+                    } else if (fromUnit === 'F' && toUnit === 'K') {
+                        step1Val = (val - 32) / 1.8;
+                        step2Val = step1Val + 273.15;
+                        formula1 = 'T<sub>C</sub> = (T<sub>F</sub> - 32) &div; 1.8';
+                        formula1_val = `T<sub>C</sub> = (${fmtVal} - 32) &div; 1.8`;
+                        formula2 = 'T<sub>K</sub> = T<sub>C</sub> + 273.15';
+                        let fmtMid = formatNumberClean(step1Val);
+                        formula2_val = `T<sub>K</sub> = ${fmtMid} + 273.15`;
+                        midUnitName = 'سیلیزی'; midSymbol = '&deg;C';
+                        fromUnitName = 'فەهرەنایت'; toUnitName = 'کڵڤن';
+                    }
+                    let fmtMid = formatNumberClean(step1Val);
+                    let fmtFinal = formatNumberClean(step2Val);
+                    let fromSym = fromUnit === 'K' ? 'K' : '&deg;' + fromUnit;
+                    let toSym = toUnit === 'K' ? 'K' : '&deg;' + toUnit;
+
+                    stepsBox.innerHTML = `
+                        <div style="color: #000; text-align: center; width: 100%; font-size: 78%;">
+                            <div style="margin-bottom: 3px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">سەرەتا ${fromUnitName} دەگۆڕین بۆ ${midUnitName}</div>
+                            <div style="direction: ltr; color: #444; margin-bottom: 2px;">${formula1}</div>
+                            <div style="direction: ltr; margin-bottom: 10px;">${formula1_val} = ${fmtMid}${midSymbol}</div>
+                            
+                            <div style="margin-bottom: 3px; color: #004488; direction: rtl; font-family: Arial, sans-serif; font-style: normal;">پاشان ${midUnitName} دەگۆڕین بۆ ${toUnitName}</div>
+                            <div style="direction: ltr; color: #444; margin-bottom: 2px;">${formula2}</div>
+                            <div style="direction: ltr;">${formula2_val} = <span style="color:#d32f2f">${fmtFinal}${toSym}</span></div>
+                        </div>
+                    `;
+                }
+            } else if (type === 'time') {
+                let startIndex = timeSeq.indexOf(fromUnit);
+                let endIndex = timeSeq.indexOf(toUnit);
+                
+                if (startIndex === endIndex) {
+                    stepsBox.innerHTML = `<div style="color: #000;">${fmtVal}${fromUnit} = <span style="color:#d32f2f">${fmtVal}${toUnit}</span></div>`;
+                    return;
+                }
+                
+                let timeStepsHTML = '<div style="color: #000; text-align: center; width: 100%; font-size: 68%;">';
+                let currentVal = val;
+                
+                if (startIndex < endIndex) {
+                    for (let i = startIndex; i < endIndex; i++) {
+                        let nUnit = timeSeq[i+1];
+                        let f = timeFactors[i];
+                        let nextVal = currentVal * f;
+                        let fmtOut = formatNumberClean(nextVal);
+                        let fmtIn = formatNumberClean(currentVal);
+                        
+                        timeStepsHTML += `<div style="margin-bottom: 12px; direction: ltr;">${fmtIn}${timeSeq[i]} = ${fmtIn} &times; ${f} = <span style="color:#d32f2f">${fmtOut}${nUnit}</span></div>`;
+                        currentVal = nextVal;
+                    }
+                } else {
+                    for (let i = startIndex; i > endIndex; i--) {
+                        let nUnit = timeSeq[i-1];
+                        let f = timeFactors[i-1];
+                        let nextVal = currentVal / f;
+                        let fmtOut = formatNumberClean(nextVal);
+                        let fmtIn = formatNumberClean(currentVal);
+                        
+                        timeStepsHTML += `
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; direction: ltr; margin-bottom: 15px; width: 100%;">
+                                <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+                                    <div style="margin-right: 5px;">${fmtIn}${timeSeq[i]} =</div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                        <div style="border-bottom: 2px solid #000; padding: 0 4px; line-height: 1.1;">${fmtIn}</div>
+                                        <div style="padding: 0 4px; line-height: 1.1;">${f}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 5px;">
+                                    <div style="margin-right: 5px;">=</div>
+                                    <div><span style="color:#d32f2f">${fmtOut}${nUnit}</span></div>
+                                </div>
+                            </div>
+                        `;
+                        currentVal = nextVal;
+                    }
+                }
+                timeStepsHTML += '</div>';
+                stepsBox.innerHTML = timeStepsHTML;
             }
         }
 
@@ -784,33 +1059,53 @@
         function atanDeg(val) { return Math.atan(val) * (180 / Math.PI); }
 
         function parseExprForEval(expr) {
+            expr = expr.replace(/(^|[^\d.])0+(?=\d)/g, '$1');
+
+            expr = expr.replace(/ANS/g, lastAns);
+
+            expr = expr.replace(/sin⁻¹\(/g, 'asinDeg(')
+                       .replace(/cos⁻¹\(/g, 'acosDeg(')
+                       .replace(/tan⁻¹\(/g, 'atanDeg(');
+
+            expr = expr.replace(/(\d+\.?\d*)√(\d+\.?\d*)/g, '($2)**(1/($1))');
+            expr = expr.replace(/\(([^)]+)\)√(\d+\.?\d*)/g, '($2)**(1/($1))');
+            expr = expr.replace(/(\d+\.?\d*)√\(([^)]+)\)/g, '($2)**(1/($1))');
+            expr = expr.replace(/\(([^)]+)\)√\(([^)]+)\)/g, '($2)**(1/($1))');
+            
+            expr = expr.replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)');
+            expr = expr.replace(/√(\d+\.?\d*)/g, 'Math.sqrt($1)');
+
+            expr = expr.replace(/x10([⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+)/g, function(match, p1) {
+                const supToNormal = {
+                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+                    '⁻': '-', '⁺': '+'
+                };
+                let normalNum = p1.split('').map(c => supToNormal[c]).join('');
+                return '*10**' + normalNum;
+            });
+
             expr = expr.replace(/(\d)(π)/g, '$1*$2')
                        .replace(/(π)(\d)/g, '$1*$2')
                        .replace(/(\d)(\()/g, '$1*$2')
                        .replace(/(\))(\d)/g, '$1*$2')
                        .replace(/(π)(\()/g, '$1*$2')
                        .replace(/(\))(π)/g, '$1*$2')
-                       .replace(/(\d)(sin|cos|tan|log|10\^\(|√|∛)/g, '$1*$2')
-                       .replace(/(\))(sin|cos|tan|log|10\^\(|√|∛)/g, '$1*$2');
+                       .replace(/(\d)(sin|cos|tan|log|10\^\(|√|∛|asinDeg|acosDeg|atanDeg)/g, '$1*$2')
+                       .replace(/(\))(sin|cos|tan|log|10\^\(|√|∛|asinDeg|acosDeg|atanDeg)/g, '$1*$2');
 
-            return expr.replace(/sin⁻¹\(/g, 'asinDeg(')
-                       .replace(/cos⁻¹\(/g, 'acosDeg(')
-                       .replace(/tan⁻¹\(/g, 'atanDeg(')
-                       .replace(/sin\(/g, 'sinDeg(')
+            return expr.replace(/sin\(/g, 'sinDeg(')
                        .replace(/cos\(/g, 'cosDeg(')
                        .replace(/tan\(/g, 'tanDeg(')
                        .replace(/log\(/g, 'Math.log10(')
-                       .replace(/10\^\(/g, '10**(')
-                       .replace(/√\(/g, 'Math.sqrt(')
+                       .replace(/10\^/g, '10**')
                        .replace(/∛\(/g, 'Math.cbrt(')
                        .replace(/÷/g, '/')
-                       .replace(/x10\^/g, '*10**')
                        .replace(/x/g, '*') 
                        .replace(/²/g, '**2')
                        .replace(/³/g, '**3')
                        .replace(/\^/g, '**')
-                       .replace(/π/g, 'Math.PI')
-                       .replace(/ANS/g, lastAns);
+                       .replace(/π/g, 'Math.PI');
         }
 
         function calc() {
@@ -828,8 +1123,10 @@
                 let result = eval(expr);
                 
                 if(result !== undefined) {
-                   result = parseFloat(result.toPrecision(10));
-                   let resStr = removeENotation(result.toString());
+                   if (isNaN(result) || !isFinite(result)) {
+                       throw new Error("Invalid math");
+                   }
+                   let resStr = formatNumberClean(result);
                    currentExpression = resStr;
                    lastAns = result; 
                    engShift = 0; 
@@ -841,6 +1138,7 @@
                 return;
             }
             updateDisplay();
+            saveState();
         }
     </script>
 </body>

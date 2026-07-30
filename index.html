@@ -617,6 +617,15 @@
             acCore();
         }
 
+        function del() {
+            if (isPowerOff) return;
+            if (currentExpression.length > 0) {
+                currentExpression = currentExpression.slice(0, -1);
+                justCalculated = false;
+                updateDisplay();
+            }
+        }
+
         function updateInvUI() {
             const invBtn = document.getElementById('btn-inv');
             const sinBtn = document.getElementById('btn-sin');
